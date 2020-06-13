@@ -44,6 +44,9 @@ class stockDataRetriever:
 
         return data
 
+
+
+    # parse stock data by dropping certain columns
     def parseData(self, data, savedCols, multiindex=False):
 
         # get list of columns
@@ -96,11 +99,11 @@ class stockDataRetriever:
 
         return list(reversed(deltas))
 
-##### EXAMPLE CODE######
+#### EXAMPLE CODE######
 
-#s = stockDataRetriever()
+s = stockDataRetriever()
 
-#d = s.retrieveData("MSFT", "7d", "1d")
-#s.parseData(d, ['Open', 'Close'])
+d = s.retrieveData("MSFT", "5d", "1d")
+s.parseData(d, ['Open', 'Close'])
 
-#print(d)
+print(d)
