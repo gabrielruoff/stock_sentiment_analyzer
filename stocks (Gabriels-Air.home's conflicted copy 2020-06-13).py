@@ -44,12 +44,16 @@ class stockDataHandler:
 
         return data
 
-    def handleStockData(self, tickers, start_date, end_date=datetime.now().date(), cell_size="1d"):
+    def handleStockData(self, tickers, start_date, cell_size="1d"):
 
         stockData = []
 
+        # convert start date into datetime
+        today = datetime.now().date()
+
+
         # calculate period of days
-        period = str((end_date - start_date.date()).days) + 'd'
+        period = str((today - start_date.date()).days) + 'd'
 
         # list of stock cell dataframes across target period
 
@@ -70,14 +74,14 @@ class stockDataHandler:
 
 ## Testing
 
-# t0 = time.time()
-# sdh = stockDataHandler()
-#
-# tickers = ['MSFT', 'AAPL']
-# start_date = datetime(2019, 6, 7, 0, 0, 0)
-#
-# print(sdh.retrieveData(tickers, '10d', '1d' ))
-#
-# stockData  = sdh.handleStockData(tickers, start_date)
-# print("took:", time.time()-t0, "seconds")
-# print(stockData)
+t0 = time.time()
+sdh = stockDataHandler()
+
+tickers = ['$MSFT', '$AAPL']
+start_date = datetime(2019, 6, 7, 0, 0, 0)
+
+print(sdh.retrieveData(tickers, '10d', '1d' ))
+
+stockData  = sdh.handleStockData(tickers, start_date)
+print("took:", time.time()-t0, "seconds")
+print(stockData)
