@@ -5,12 +5,12 @@ from sklearn.preprocessing import RobustScaler
 
 class svm_regression_modeler:
 
-    def __init__(self, kernel='rbf', c=1e3, gamma=0.1):
+    def __init__(self, kernel='rbf', c=1e3, gamma=0.1, epsilon=0.00001):
         self.x_train = np.array(0)
         self.y_train = np.array(0)
         self.x_test = np.array(0)
         self.y_test = np.array(0)
-        self.SVR = SVR(kernel=kernel, C=c, gamma=gamma)
+        self.SVR = SVR(kernel=kernel, C=c, gamma=gamma, epsilon=epsilon)
 
         self.model = None
 
@@ -36,7 +36,7 @@ class svm_regression_modeler:
 
     def runModel(self, ):
         print("xt:", self.x_train, "yt:", self.y_train)
-        model = self.SVR.fit(self.x_train, self.y_train)
+        self.model = self.SVR.fit(self.x_train, self.y_train)
 
         svm_confidence = self.SVR.score(self.x_test, self.y_test)
         print("svm confidence: ", svm_confidence)

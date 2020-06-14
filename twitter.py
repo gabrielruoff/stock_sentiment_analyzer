@@ -2,6 +2,7 @@ from lib import got3 as got
 import datetime
 import re
 import sentiment
+import time
 
 
 class tweethandler:
@@ -22,6 +23,12 @@ class tweethandler:
         for start in (start_date + (n * cell_size) for n in range(int((end_date - start_date).days))):
 
             print("🐦-> ", end="")
+
+            # time.sleep(10)
+
+
+            # wait so as not to overload server and get kicked off
+            # time.sleep(120)
 
             since = str(start.date())
 
@@ -57,10 +64,14 @@ class tweethandler:
 
                 for element in tw_list:
 
-                    cells[-1].append(element)
+                    try:
+
+                        cells[-1].append(element)
+
+                    except IndexError:
+                        pass
 
             else:
-
                 cells.append(tw_list)
 
         print("")

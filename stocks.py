@@ -1,6 +1,5 @@
 import yfinance as yf
 from datetime import datetime
-import time
 import numpy as np
 
 class stockDataHandler:
