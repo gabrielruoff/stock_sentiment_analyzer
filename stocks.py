@@ -1,6 +1,7 @@
 import yfinance as yf
 from datetime import datetime
 import time
+import numpy as np
 
 class stockDataHandler:
 
@@ -44,12 +45,14 @@ class stockDataHandler:
 
         return data
 
-    def handleStockData(self, tickers, start_date, end_date=datetime.now().date(), cell_size="1d"):
+    def handleStockData(self, tickers, start_date, end_date=datetime.now(), cell_size="1d"):
 
         stockData = []
 
         # calculate period of days
-        period = str((end_date - start_date.date()).days) + 'd'
+        period = np.busday_count(start_date.date(), end_date.date())
+        period = str(period) + 'd'
+        print("period:", period)
 
         # list of stock cell dataframes across target period
 
@@ -57,6 +60,8 @@ class stockDataHandler:
 
             # retrieve dataframe (ticker[1:] removes '$' from ticker)
             ticker_df = self.retrieveData(ticker[1:], period, cell_size)
+
+            # print(ticker_df.loc[:, :])
 
             # get delta from dataframe and add to list
             ticker_deltas = ((ticker_df['Close']-ticker_df['Open'])/ticker_df['Open']).tolist()
@@ -68,16 +73,17 @@ class stockDataHandler:
         return stockData
 
 
-## Testing
-
+# # Testing
+#
 # t0 = time.time()
 # sdh = stockDataHandler()
 #
-# tickers = ['MSFT', 'AAPL']
-# start_date = datetime(2019, 6, 7, 0, 0, 0)
+# tickers = ['$MSFT', '$AAPL']
+# start_date = datetime(2020, 6, 3, 0, 0, 0)
 #
-# print(sdh.retrieveData(tickers, '10d', '1d' ))
+# # print(sdh.retrieveData(tickers, '10', '1d' ))
 #
 # stockData  = sdh.handleStockData(tickers, start_date)
 # print("took:", time.time()-t0, "seconds")
 # print(stockData)
+# print(len(stockData[0]))

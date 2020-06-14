@@ -1,33 +1,34 @@
 from lib import got3 as got
 import datetime
 import re
+import sentiment
 
 
-class twitter:
+class tweethandler:
 
     def __init__(self):
 
         # initialise sentiment calculator
-        pass
+        self.st = sentiment.sentiment()
+        self.st.loadSentimentData()
 
-    def get_cell_st_score(self, ticker, start_date, end_date, quantity, cell_size=datetime.timedelta(1)):
+    def get_cell_st_scores(self, ticker, start_date, end_date, quantity, cell_size=datetime.timedelta(1)):
         # list of cell scores to return
+        cell_scores = []
 
         # list of cells- raw twitter data
         cells = []
 
-        print(int((end_date - start_date).days))
-
         for start in (start_date + (n * cell_size) for n in range(int((end_date - start_date).days))):
 
-            print("start:", start)
+            print("🐦-> ", end="")
 
             since = str(start.date())
-            print(since)
 
             until = start + cell_size
             until = str(until.date())
-            print(until)
+
+            #print("since:", since, "until:", until)
 
             tweetCriteria = got.manager.TweetCriteria()
 
@@ -49,16 +50,30 @@ class twitter:
                 # force lower case
                 tw_list[i] = tw_list[i].lower()
 
-            print(tw_list)
-
-            # score list
-
             # add to cells
-            cells.append(tw_list)
+            # if tweet is from a Saturday or Sunday
+            # print((start).strftime("%A"))
+            if (start).strftime("%A") == "Sunday" or (start).strftime("%A") == "Saturday":
+
+                for element in tw_list:
+
+                    cells[-1].append(element)
+
+            else:
+
+                cells.append(tw_list)
+
+        print("")
 
         # score list of cells
-        cell_scores = 5
+        cell_scores = self.st.calculate_st_score(cells)
 
-tw = twitter()
+        return cell_scores
 
-tw.get_cell_st_score("$MSFT", datetime.datetime(2020, 6, 7), datetime.datetime(2020, 6, 12, 0, 0), 10)
+# TEST CODE
+# tw = tweethandler()
+#
+# scores = tw.get_cell_st_scores("$MSFT", datetime.datetime(2020, 6, 3), datetime.datetime(2020, 6, 13, 0, 0), 10)
+#
+# print(len(scores))
+# print(scores)

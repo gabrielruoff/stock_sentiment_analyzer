@@ -1,9 +1,10 @@
 import numpy as np
+from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import RobustScaler
+from stockDataRetriever import stockDataRetriever
 
-class svm_regression_modeler:
+class svm_regression_model:
 
     def __init__(self, kernel='rbf', c=1e3, gamma=0.1):
         self.x_train = np.array(0)
@@ -21,17 +22,6 @@ class svm_regression_modeler:
 
     def buildModel(self, model_X, model_y, test_size=0.2):
 
-        #pre-process data
-
-        # scale X data
-        rbX = RobustScaler()
-        model_X = rbX.fit_transform(model_X)
-
-        # print("pre-pocessed")
-        # print(model_X)
-        # print(model_y)
-
-        # split data
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(model_X, model_y, test_size=test_size)
 
     def runModel(self, ):
@@ -40,3 +30,5 @@ class svm_regression_modeler:
 
         svm_confidence = self.SVR.score(self.x_test, self.y_test)
         print("svm confidence: ", svm_confidence)
+
+        print(type(model))
