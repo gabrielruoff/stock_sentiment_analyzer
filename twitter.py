@@ -13,71 +13,115 @@ class tweethandler:
         self.st = sentiment.sentiment()
         self.st.loadSentimentData()
 
-    def get_cell_st_scores(self, ticker, start_date, end_date, quantity, cell_size=datetime.timedelta(1)):
+    def get_cell_st_scores(self, ticker, start_date, end_date, quantity, cell_size=datetime.timedelta(1), outfile=None, infile=None):
+
         # list of cell scores to return
         cell_scores = []
 
-        # list of cells- raw twitter data
-        cells = []
+        if infile is not None:
 
-        for start in (start_date + (n * cell_size) for n in range(int((end_date - start_date).days))):
+            readin = open(infile)
 
-            print("🐦-> ", end="")
+            for line in readin:
 
-            # time.sleep(10)
+                print("line:", line)
+
+                if line.rstrip() != '.':
+                    print("appending", line.rstrip())
+                    cell_scores.append(line.rstrip())
+
+                else:
+
+                    cell_scores.append(line)
+
+            readin.close()
+
+        print("saved cell scores: ",cell_scores)
+
+        if infile is None:
+
+            # list of cells- raw twitter data
+            cells = []
+
+            # if outfile arg is populated, save tweets to file
+            if outfile is not None:
+
+                out = open(outfile, 'w')
+                out.truncate(0)
+                out.close()
+
+            for start in (start_date + (n * cell_size) for n in range(int((end_date - start_date).days))):
+
+                print("🐦-> ", end="")
+
+                time.sleep(5)
 
 
-            # wait so as not to overload server and get kicked off
-            # time.sleep(120)
+                # wait so as not to overload server and get kicked off
+                # time.sleep(120)
 
-            since = str(start.date())
+                since = str(start.date())
 
-            until = start + cell_size
-            until = str(until.date())
+                until = start + cell_size
+                until = str(until.date())
 
-            #print("since:", since, "until:", until)
+                #print("since:", since, "until:", until)
 
-            tweetCriteria = got.manager.TweetCriteria()
+                tweetCriteria = got.manager.TweetCriteria()
 
-            tweetCriteria.setQuerySearch(ticker)
-            tweetCriteria.setSince(since)
-            tweetCriteria.setUntil(until)
-            tweetCriteria.setMaxTweets(quantity)
+                tweetCriteria.setQuerySearch(ticker)
+                tweetCriteria.setSince(since)
+                tweetCriteria.setUntil(until)
+                tweetCriteria.setMaxTweets(quantity)
 
-            tweets = got.manager.TweetManager.getTweets(tweetCriteria)
+                tweets = got.manager.TweetManager.getTweets(tweetCriteria)
 
-            # put tweets into list
-            tw_list = [tweet.text for tweet in tweets]
+                # put tweets into list
+                tw_list = [tweet.text for tweet in tweets]
 
-            # clean up tweets in list
-            for i in range(len(tw_list)):
-                # remove links
-                tw_list[i] = " ".join(re.sub("([^0-9A-Za-z$ \t])|(\w+:\/\/\S+)", "", tw_list[i]).split())
+                # clean up tweets in list
+                for i in range(len(tw_list)):
+                    # remove links
+                    tw_list[i] = " ".join(re.sub("([^0-9A-Za-z$ \t])|(\w+:\/\/\S+)", "", tw_list[i]).split())
 
-                # force lower case
-                tw_list[i] = tw_list[i].lower()
+                    # force lower case
+                    tw_list[i] = tw_list[i].lower()
 
-            # add to cells
-            # if tweet is from a Saturday or Sunday
-            # print((start).strftime("%A"))
-            if (start).strftime("%A") == "Sunday" or (start).strftime("%A") == "Saturday":
 
-                for element in tw_list:
+                # add to cells
+                # if tweet is from a Saturday or Sunday
+                # print((start).strftime("%A"))
+                if (start).strftime("%A") == "Sunday" or (start).strftime("%A") == "Saturday":
 
-                    try:
+                    for element in tw_list:
 
-                        cells[-1].append(element)
+                        try:
 
-                    except IndexError:
-                        pass
+                            cells[-1].append(element)
 
-            else:
-                cells.append(tw_list)
+                        except IndexError:
+                            pass
 
-        print("")
+                else:
 
-        # score list of cells
-        cell_scores = self.st.calculate_st_score(cells)
+                    # print(len(tw_list))
+                    cells.append(tw_list)
+
+
+            print("")
+
+            # score list of cells
+            cell_scores = self.st.calculate_st_score(cells)
+
+            if outfile is not None:
+
+                for score in cell_scores:
+
+                    out.open()
+
+                    out.write(str(score)+'\n')
+
+                    out.close()
 
         return cell_scores
 

@@ -24,14 +24,17 @@ def main(start_date, exclude, training, quantity):
 
     print("retrieving", quantity*(datetime.now()-start_date).days, "tweets.. ")
 
-    scores = tw.get_cell_st_scores("$SPY", start_date, datetime.today(), quantity)
+    scores = tw.get_cell_st_scores(tickers[0], start_date, datetime.today(), quantity, infile=infile, outfile=outfile)
+    print("scores:", scores)
+    print(len(scores))
 
     print("building model...")
 
     # prepare data to hand to model
     model_x1 = scores
-    print(model_x1)
+    print("model_x1 length:", len(model_x1))
     model_x2 = stockData[0]
+    print("model_x2 length:", len(model_x2))
 
     model_X = []
 
@@ -46,7 +49,7 @@ def main(start_date, exclude, training, quantity):
     print(model_y)
 
     #SVM modeler
-    sv_model = svm_regression_modeler(kernel='rbf', c=1e2, gamma=1e-3)
+    sv_model = svm_regression_modeler(kernel='rbf', c=1e2, gamma=0.0055)
 
     sv_model.buildModel(model_X, model_y, training)
     sv_model.runModel()
@@ -62,7 +65,7 @@ def main(start_date, exclude, training, quantity):
         svm_prediction = sv_model.SVR.predict(predict_data)
         svm_predictions.append(svm_prediction)
         scores_remaining.append(score_reminaing)
-        print("prediction for", (datetime.now()-(i*timedelta(1)), score_reminaing))
+        print("prediction for", (datetime.now()-((len(scores_remaining)-i)*timedelta(1)), score_reminaing))
         print(svm_prediction)
 
     xplt1 = [i for i in range(len(model_x2))]
@@ -72,7 +75,7 @@ def main(start_date, exclude, training, quantity):
 
     # plot data
     plt.plot([i for i in range(len(model_x2))], model_x2, 'ro', xplt2, svm_predictions, 'bs')
-    plt.axis([0, (datetime.today()-start_date).days, -0.08, 0.08])
+    plt.axis([0, (datetime.today()-start_date).days, -0.1, 0.1])
     plt.show()
 
 
@@ -86,6 +89,10 @@ parser.add_argument('--exclude', default=2,
                     help='number of datapoints from top of calender tree to exclude')
 parser.add_argument('--tweet_quantity', default=500,
                     help='number of tweets to gather per cell')
+parser.add_argument('--infile', default=None,
+                    help='file to read scores from (optional)')
+parser.add_argument('--outfile', default=None,
+                    help='file to save scores to (optional)')
 
 args = parser.parse_args()
 start_date = datetime.strptime(args.start_date, "%Y-%m-%d")
@@ -95,6 +102,10 @@ exclude = int(args.exclude)*-1
 training = round(1 - float(args.training), 2)
 
 quantity = int(args.tweet_quantity)
+
+infile = args.infile
+
+outfile = args.outfile
 
 print(start_date, training, quantity)
 
