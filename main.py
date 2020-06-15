@@ -11,7 +11,7 @@ def main(start_date, exclude, training, quantity):
     # get stock data
     sdh = stockDataHandler()
 
-    tickers = ['$SPY']
+    tickers = ['$DSPG']
     #start_date = datetime(2020, 6, 2, 0, 0, 0)
 
     print("retrieving stock data...")
@@ -34,7 +34,7 @@ def main(start_date, exclude, training, quantity):
     model_x1 = scores
     print("model_x1 length:", len(model_x1))
     model_x2 = stockData[0]
-    print("model_x2 length:", len(model_x2))
+    print("model_x2 length:", len(model_x2), "model_x2:", model_x2)
 
     model_X = []
 
@@ -49,7 +49,7 @@ def main(start_date, exclude, training, quantity):
     print(model_y)
 
     #SVM modeler
-    sv_model = svm_regression_modeler(kernel='rbf', c=1e2, gamma=0.0055)
+    sv_model = svm_regression_modeler(kernel='rbf', c=1e2, gamma=1e-3)
 
     sv_model.buildModel(model_X, model_y, training)
     sv_model.runModel()
@@ -71,7 +71,7 @@ def main(start_date, exclude, training, quantity):
     xplt1 = [i for i in range(len(model_x2))]
     xplt2 = [i+len(xplt1) for i in range(len(svm_predictions))]
 
-    print(xplt2)
+    # print(xplt2)
 
     # plot data
     plt.plot([i for i in range(len(model_x2))], model_x2, 'ro', xplt2, svm_predictions, 'bs')

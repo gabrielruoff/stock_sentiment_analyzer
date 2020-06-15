@@ -36,25 +36,24 @@ class tweethandler:
 
             readin.close()
 
-        print("saved cell scores: ",cell_scores)
+        print("saved cell scores: ", cell_scores)
+
+        # if outfile arg is populated, save tweets to file
+        if outfile is not None:
+            out = open(outfile, 'w')
+            out.truncate(0)
+            out.close()
 
         if infile is None:
 
             # list of cells- raw twitter data
             cells = []
 
-            # if outfile arg is populated, save tweets to file
-            if outfile is not None:
-
-                out = open(outfile, 'w')
-                out.truncate(0)
-                out.close()
-
             for start in (start_date + (n * cell_size) for n in range(int((end_date - start_date).days))):
 
                 print("🐦-> ", end="")
 
-                time.sleep(5)
+                time.sleep(21)
 
 
                 # wait so as not to overload server and get kicked off
@@ -113,15 +112,18 @@ class tweethandler:
             # score list of cells
             cell_scores = self.st.calculate_st_score(cells)
 
+
             if outfile is not None:
+
+                out = open(outfile, 'w')
 
                 for score in cell_scores:
 
-                    out.open()
+                    print("ran loop for", score)
 
                     out.write(str(score)+'\n')
 
-                    out.close()
+                out.close()
 
         return cell_scores
 
