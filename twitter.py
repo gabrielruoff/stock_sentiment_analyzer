@@ -24,7 +24,7 @@ class tweethandler:
 
             for line in readin:
 
-                print("line:", line)
+                # print("line:", line)
 
                 if line.rstrip() != '.':
                     print("appending", line.rstrip())
@@ -36,7 +36,7 @@ class tweethandler:
 
             readin.close()
 
-        print("saved cell scores: ", cell_scores)
+        # print("saved cell scores: ", cell_scores)
 
         # if outfile arg is populated, save tweets to file
         if outfile is not None:
@@ -53,7 +53,7 @@ class tweethandler:
 
                 print("🐦-> ", end="")
 
-                time.sleep(21)
+                time.sleep(200)
 
 
                 # wait so as not to overload server and get kicked off
@@ -118,8 +118,6 @@ class tweethandler:
                 out = open(outfile, 'w')
 
                 for score in cell_scores:
-
-                    print("ran loop for", score)
 
                     out.write(str(score)+'\n')
 
