@@ -10,10 +10,10 @@ class twitterDataRetriever:
 
     def __init__(self):
 
-        self.consumer_key = 'jgou2mwBcYlsoMAVWS6AxMuz9'
-        self.consumer_secret = 'nsnkswvaK34SSM6ak4n8RPvvtqjtyp5VrzvPeZgF3oByq05xjN'
-        self.access_token = '705040220547321856-pPTLCKPeKkt9nrXpmz7rACRKVprw0HK'
-        self.access_token_secret = 'FN7wmynHZoNAeviLSz5qPRevOtjNvH41fpud0tTxEY3MO'
+        self.consumer_key = ''
+        self.consumer_secret = ''
+        self.access_token = ''
+        self.access_token_secret = ''
 
         # define api instance
         auth = tw.OAuthHandler(self.consumer_key, self.consumer_secret)
